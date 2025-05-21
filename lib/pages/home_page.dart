@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -5,6 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobile_app/components/custom_snack_bar.dart';
 import 'package:mobile_app/components/google_map_widget.dart';
 import 'package:mobile_app/components/recent_route.dart';
+import 'package:mobile_app/user/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -91,6 +94,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.user;
 
     return Scaffold(
       backgroundColor: theme.surface,
@@ -106,7 +111,18 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 20),
                   Text("EcoDrive", style: TextStyle(fontSize: 28)),
                   const SizedBox(height: 10),
-                  Text("Buen día, USUARIO", style: TextStyle(fontSize: 18)),
+                  Text.rich(
+                  TextSpan(
+                      text: "Buen día, ",
+                      children: [
+                        TextSpan(
+                          text: user?.name ?? 'Usuario',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primary),
+                        ),
+                      ],
+                    ),
+                    style: TextStyle(fontSize: 18),
+                  ),
                   const SizedBox(height: 20),
 
                   AnimatedSwitcher(
@@ -130,9 +146,12 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(theme.primary),
-                              ),
+                              Theme.of(context).platform == TargetPlatform.iOS ?
+                                CupertinoActivityIndicator(radius: 16, animating: true, color: theme.primary,)
+                                :
+                                CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(theme.primary),
+                                )
                             ],
                           ),
                         ),

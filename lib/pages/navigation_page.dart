@@ -3,7 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mobile_app/components/vehicle_selector.dart';
-import 'package:mobile_app/types/types.dart';
+import 'package:mobile_app/types/vehicle.dart';
 import 'package:mobile_app/utils/calculate_area_limit.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -27,20 +27,22 @@ class NavigationPage extends StatefulWidget {
 
 class _NavigationPageState extends State<NavigationPage> {
   late GoogleMapController _mapController;
-  final List<VehicleType> _vehicleTypes = [
-    VehicleType('Carro', Icons.directions_car_rounded, 3, 1),
-    VehicleType('Moto', Icons.motorcycle_rounded, 1, 1),
-    VehicleType('Bicicleta', Icons.directions_bike_rounded, 1, 1),
-    VehicleType('Bus', Icons.directions_bus_rounded, 1, 1),
+  final List<Vehicle> _vehicleTypes = [
+    Vehicle('Carro', Icons.directions_car_rounded, 3, 1),
+    Vehicle('Moto', Icons.motorcycle_rounded, 1, 1),
+    Vehicle('Bicicleta', Icons.directions_bike_rounded, 1, 1),
+    Vehicle('Bus', Icons.directions_bus_rounded, 1, 1),
   ];
 
-  VehicleType? _selectedVehicle;
+  Vehicle? _selectedVehicle;
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
   final PolylinePoints _polylinePoints = PolylinePoints();
 
   static BitmapDescriptor _originIcon = BitmapDescriptor.defaultMarker;
   static BitmapDescriptor _finalIcon = BitmapDescriptor.defaultMarker;
+
+  late LatLng _cameraPos;
 
   // Map Style
   static String _mapStyle = "";
@@ -54,6 +56,12 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _cameraPos = LatLng(
+        (widget.currentPos.latitude + widget.destinationPos.latitude) / 2,
+        (widget.currentPos.longitude + widget.destinationPos.longitude) / 2);
+    });
+
     Future.wait([
       DefaultAssetBundle.of(context).loadString("assets/google_maps_style.json")
         .then((v) => _mapStyle = v),
@@ -68,8 +76,8 @@ class _NavigationPageState extends State<NavigationPage> {
         });
       })
     ]).then((_){
-          _initializeMapData();
-          _getPolyline();
+        _initializeMapData();
+        _getPolyline();
     });
   }
 
@@ -150,73 +158,113 @@ class _NavigationPageState extends State<NavigationPage> {
     await _mapController.animateCamera(cameraUpdate);
   }
 
-  LatLngBounds get _areaLimit => calculateAreaLimit(LatLng(
-    (widget.currentPos.latitude + widget.destinationPos.latitude) / 2,
-    (widget.currentPos.longitude + widget.destinationPos.longitude) / 2,
-    ), 6.0);
+  LatLngBounds get _areaLimit => calculateAreaLimit(_cameraPos, 6.0);
+
+  void _moveToCurrentPosition() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _mapController.animateCamera(
+        CameraUpdate.newLatLngZoom(_cameraPos, 13.8),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          GoogleMap(
-            style: _mapStyle,
-            onMapCreated: (controller) {
-              _mapController = controller;
-              _fitToBounds();
+          Expanded(
+            child: Stack(
+              children: [
+                GoogleMap(
+                  padding: EdgeInsets.only(bottom: 20),
+                  style: _mapStyle,
+                  onMapCreated: (controller) {
+                    _mapController = controller;
+                    _fitToBounds();
+                  },
+                  initialCameraPosition: CameraPosition(
+                    target: _cameraPos,
+                    zoom: 13.8,
+                  ),
+                  minMaxZoomPreference: MinMaxZoomPreference(12, 16),
+                  cameraTargetBounds: CameraTargetBounds(_areaLimit),
+                  markers: _markers,
+                  polylines: _polylines,
+                  myLocationEnabled: false,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  compassEnabled: false,
+                ),
+
+                // Return buttom
+                Positioned(
+                  top: 50,
+                  left: 20,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: theme.primary,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(Icons.arrow_back, color: theme.onPrimary),
+                      ),
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  right: 10,
+                  bottom: 20,
+                  child: FloatingActionButton.small(
+                    heroTag: 'location_fab',
+                    onPressed: _moveToCurrentPosition,
+                    backgroundColor: theme.primary,
+                    child: Icon(
+                      Icons.my_location,
+                      color: theme.onPrimary,
+                      size: 20,
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 15,
+                    decoration: BoxDecoration(
+                      color: theme.surface,
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.onSurface.withValues(alpha: 0.2),
+                          blurRadius: 15,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+
+          VehicleSelector(
+            vehicleTypes: _vehicleTypes,
+            selectedVehicle: _selectedVehicle,
+            onVehicleSelected: (vehicle) {
+              setState(() => _selectedVehicle = vehicle);
             },
-            initialCameraPosition: CameraPosition(
-              target: LatLng(
-                (widget.currentPos.latitude + widget.destinationPos.latitude) / 2,
-                (widget.currentPos.longitude + widget.destinationPos.longitude) / 2,
-              ),
-              zoom: 14,
-            ),
-            minMaxZoomPreference: MinMaxZoomPreference(12, 16),
-            cameraTargetBounds: CameraTargetBounds(_areaLimit),
-            markers: _markers,
-            polylines: _polylines,
-            myLocationEnabled: false,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            compassEnabled: false,
+            theme: theme,
           ),
-
-          // Return button
-          Positioned(
-            top: 50,
-            left: 20,
-            child: GestureDetector(
-              onTap: ()=> Navigator.pop(context),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: theme.primary,
-                  borderRadius: BorderRadius.circular(15)
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(Icons.arrow_back, color: theme.onPrimary,),
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: VehicleSelector(
-              vehicleTypes: _vehicleTypes,
-              selectedVehicle: _selectedVehicle,
-              onVehicleSelected: (vehicle) {
-                setState(() => _selectedVehicle = vehicle);
-              },
-              theme: theme,
-            ),
-          )
         ],
       ),
     );

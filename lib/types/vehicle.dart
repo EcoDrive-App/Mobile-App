@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 
-class VehicleType {
+class Vehicle {
   final String name;
   final IconData icon;
   final int quantity;
   final int maxCapacity;
 
-  VehicleType(this.name, this.icon, this.maxCapacity, this.quantity);
+  Vehicle(this.name, this.icon, this.maxCapacity, this.quantity);
 }

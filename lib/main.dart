@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mobile_app/pages/auth_wrapper.dart';
 import 'package:mobile_app/pages/destination_page.dart';
-import 'package:mobile_app/pages/home_page.dart';
+import 'package:mobile_app/pages/login_page.dart';
 import 'package:mobile_app/pages/navigation_page.dart';
-import 'package:mobile_app/pages/points_page.dart';
-import 'package:mobile_app/pages/profile_page.dart';
 import 'package:mobile_app/pages/routes_page.dart';
+import 'package:mobile_app/pages/signup_page.dart';
 import 'package:mobile_app/theme/theme.dart';
 import 'package:mobile_app/theme/theme_provider.dart';
+import 'package:mobile_app/user/user_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -16,8 +17,11 @@ void main() async {
   await themeProvider.loadThemeMode();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => themeProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => themeProvider,),
+        ChangeNotifierProvider(create: (_) => UserProvider()..loadUserData(), lazy: false,),
+      ],
       child: const MainApp(),
     )
   );
@@ -35,11 +39,11 @@ class MainApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
-      home: RoutesPage(),
+      home: const AuthWrapper(),
       routes: {
-        '/home': (context) => HomePage(),
-        '/points': (context) => PointsPage(),
-        '/profile': (context) => ProfilePage(),
+        '/login': (context) => LoginPage(),
+        '/signup': (context) => SignupPage(),
+        '/routes': (context) => RoutesPage(),
         '/destination': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
 

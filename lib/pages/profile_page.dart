@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/theme/theme_provider.dart';
+import 'package:mobile_app/user/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -65,9 +66,20 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  void _logout() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    await userProvider.logout();
+
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.user;
 
     return Scaffold(
       backgroundColor: theme.surface,
@@ -90,12 +102,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          "Usuario",
+                          user?.name ?? 'Usuario',
                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme.onSurface),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "usuario@gmail.com",
+                          user?.email ?? 'usuario@gmail.com',
                           style: TextStyle(fontSize: 16, color: theme.onSurface),
                         ),
                         const SizedBox(height: 10),
@@ -135,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   _buildOption(
                     icon: Icons.logout,
                     text: "Cerrar sesión",
-                    onTap: () {},
+                    onTap: _logout,
                     theme: theme,
                     color: Colors.red,
                   ),

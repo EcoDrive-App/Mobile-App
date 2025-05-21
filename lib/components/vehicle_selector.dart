@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/types/types.dart';
+import 'package:mobile_app/types/vehicle.dart';
 
 class VehicleSelector extends StatelessWidget {
-  final List<VehicleType> vehicleTypes;
-  final VehicleType? selectedVehicle;
-  final ValueChanged<VehicleType> onVehicleSelected;
+  final List<Vehicle> vehicleTypes;
+  final Vehicle? selectedVehicle;
+  final ValueChanged<Vehicle> onVehicleSelected;
   final ColorScheme theme;
 
   const VehicleSelector({
@@ -18,17 +18,9 @@ class VehicleSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 30),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 30),
       decoration: BoxDecoration(
         color: theme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: theme.onSurface.withValues(alpha: 0.2),
-            blurRadius: 15,
-            spreadRadius: 0,
-          ),
-        ],
       ),
       child: Column(
         children: [
