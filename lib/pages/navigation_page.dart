@@ -163,7 +163,7 @@ class _NavigationPageState extends State<NavigationPage> {
   void _moveToCurrentPosition() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mapController.animateCamera(
-        CameraUpdate.newLatLngZoom(_cameraPos, 13.8),
+        CameraUpdate.newLatLngZoom(_cameraPos, 13.6),
       );
     });
   }

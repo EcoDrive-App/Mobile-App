@@ -15,8 +15,8 @@ ThemeData lightTheme = ThemeData(
   ),
   pageTransitionsTheme: const PageTransitionsTheme(
     builders: {
-      TargetPlatform.android: NoTransitionBuilder(),
-      TargetPlatform.iOS: NoTransitionBuilder(),
+      TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
     },
   ),
 );
@@ -36,8 +36,8 @@ ThemeData darkTheme = ThemeData(
   ),
   pageTransitionsTheme: const PageTransitionsTheme(
     builders: {
-      TargetPlatform.android: NoTransitionBuilder(),
-      TargetPlatform.iOS: NoTransitionBuilder(),
+      TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
     },
   ),
 );
