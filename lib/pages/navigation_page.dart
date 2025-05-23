@@ -154,19 +154,11 @@ class _NavigationPageState extends State<NavigationPage> {
 
   Future<void> _fitToBounds() async {
     final bounds = _calculateBounds();
-    final cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 100);
+    final cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 70);
     await _mapController.animateCamera(cameraUpdate);
   }
 
   LatLngBounds get _areaLimit => calculateAreaLimit(_cameraPos, 6.0);
-
-  void _moveToCurrentPosition() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _mapController.animateCamera(
-        CameraUpdate.newLatLngZoom(_cameraPos, 13.6),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +215,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   bottom: 20,
                   child: FloatingActionButton.small(
                     heroTag: 'location_fab',
-                    onPressed: _moveToCurrentPosition,
+                    onPressed: _fitToBounds,
                     backgroundColor: theme.primary,
                     child: Icon(
                       Icons.my_location,

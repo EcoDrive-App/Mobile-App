@@ -34,7 +34,6 @@ class CustomSnackBar {
         backgroundColor: backgroundColor ?? theme.secondary,
         elevation: 8,
         duration: Duration(seconds: durationSeconds),
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       ),
     ).closed.then((_) {

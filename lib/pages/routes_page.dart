@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mobile_app/components/location_warning.dart';
 import 'package:mobile_app/components/navbar.dart';
 import 'package:mobile_app/pages/home_page.dart';
 import 'package:mobile_app/pages/points_page.dart';
@@ -13,6 +17,8 @@ class RoutesPage extends StatefulWidget {
 
 class _RoutesPageState extends State<RoutesPage> with AutomaticKeepAliveClientMixin {
   int _currentIndex = 1;
+  bool _isLocationEnabled = true;
+  StreamSubscription<ServiceStatus>? _locationServiceSubscription;
   final List<Widget> _pages = [
     PointsPage(),
     HomePage(),
@@ -29,6 +35,34 @@ class _RoutesPageState extends State<RoutesPage> with AutomaticKeepAliveClientMi
   }
 
   @override
+  void initState() {
+    super.initState();
+    _checkLocationService();
+    _setupLocationServiceListener();
+  }
+
+  @override
+  void dispose() {
+    _locationServiceSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _checkLocationService() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    setState(() {
+      _isLocationEnabled = serviceEnabled;
+    });
+  }
+
+  void _setupLocationServiceListener() {
+    _locationServiceSubscription = Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
+      setState(() {
+        _isLocationEnabled = status == ServiceStatus.enabled;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
 
@@ -38,7 +72,7 @@ class _RoutesPageState extends State<RoutesPage> with AutomaticKeepAliveClientMi
         bottom: false,
         child: Stack(
           children: [
-            // Main Conent
+            // Main Content
             Positioned.fill(
               child: IndexedStack(
                 index: _currentIndex,
@@ -56,6 +90,15 @@ class _RoutesPageState extends State<RoutesPage> with AutomaticKeepAliveClientMi
                 onTap: _onTabSelected,
               ),
             ),
+
+            // Location warning (now on top of navbar)
+            if (!_isLocationEnabled)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 20,
+                child: const LocationWarning(),
+              ),
           ],
         ),
       ),

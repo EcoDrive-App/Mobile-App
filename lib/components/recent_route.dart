@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 
 class RecentRoute extends StatelessWidget {
-  final String time;
-  final String from;
   final String to;
-
 
   const RecentRoute({
     super.key,
-    required this.time,
-    required this.from,
     required this.to
   });
 
@@ -17,88 +12,70 @@ class RecentRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
 
-     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
       child: Container(
         decoration: BoxDecoration(
           color: theme.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: theme.onSurface.withValues(alpha: 0.1),
-              blurRadius: 4,
+              color: theme.onSurface.withValues(alpha: 0.08),
+              blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Time Row
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.access_time, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      time,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              // Handle route selection
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  // Time and destination icon
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: theme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.location_on,
+                      color: theme.primary,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  Expanded(
+                    child: Text(
+                      to,
                       style: TextStyle(
-                        fontSize: 14,
-                        color: theme.onSurface.withValues(alpha: 0.8),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: theme.onSurface,
                       ),
                     ),
-                  ],
-                ),
-                GestureDetector(
-                  child: const Icon(Icons.star_border, size: 20,),
-                  onTap: () {},
-                )
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Route info
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Timeline
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Column(
-                    children: [
-                      Icon(Icons.radio_button_checked, size: 14, color: theme.secondary),
-                      Container(
-                        width: 2,
-                        height: 24,
-                        color: theme.secondary.withValues(alpha: 0.5),
-                      ),
-                      Icon(Icons.location_on, size: 16, color: theme.secondary),
-                    ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                // From/To
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        from,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        to,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+
+                  // Favorite button
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.star_border,
+                      color: theme.primary,
+                      size: 24,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
