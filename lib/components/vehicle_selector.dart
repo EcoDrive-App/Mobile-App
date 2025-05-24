@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/components/passenger_selector.dart';
 import 'package:mobile_app/types/vehicle.dart';
 
 class VehicleSelector extends StatelessWidget {
   final List<Vehicle> vehicleTypes;
   final Vehicle? selectedVehicle;
   final ValueChanged<Vehicle> onVehicleSelected;
-  final ColorScheme theme;
+  final int currentPassengers;
+  final ValueChanged<int> onPassengerCountChanged;
 
   const VehicleSelector({
     super.key,
     required this.vehicleTypes,
     required this.selectedVehicle,
     required this.onVehicleSelected,
-    required this.theme,
+    required this.currentPassengers,
+    required this.onPassengerCountChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 30),
       decoration: BoxDecoration(
@@ -44,7 +49,9 @@ class VehicleSelector extends StatelessWidget {
 
                 return GestureDetector(
                   onTap: () => onVehicleSelected(vehicle),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
                     width: 90,
                     margin: const EdgeInsets.only(right: 12),
                     decoration: BoxDecoration(
@@ -76,6 +83,24 @@ class VehicleSelector extends StatelessWidget {
                 );
               },
             ),
+          ),
+
+          // Passenger selector with animation
+          AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: selectedVehicle != null && selectedVehicle!.maxCapacity > 1
+                ? Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      PassengerSelector(
+                        vehicle: selectedVehicle!,
+                        currentPassengers: currentPassengers,
+                        onPassengerCountChanged: onPassengerCountChanged,
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(),
           ),
 
           // Botón de confirmación

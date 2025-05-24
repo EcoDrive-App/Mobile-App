@@ -35,6 +35,7 @@ class _NavigationPageState extends State<NavigationPage> {
   ];
 
   Vehicle? _selectedVehicle;
+  int _currentPassengers = 1;
   Set<Marker> _markers = {};
   Set<Polyline> _polylines = {};
   final PolylinePoints _polylinePoints = PolylinePoints();
@@ -253,9 +254,18 @@ class _NavigationPageState extends State<NavigationPage> {
             vehicleTypes: _vehicleTypes,
             selectedVehicle: _selectedVehicle,
             onVehicleSelected: (vehicle) {
-              setState(() => _selectedVehicle = vehicle);
+              setState(() {
+                _selectedVehicle = vehicle;
+                // Reset passenger count when changing vehicle
+                _currentPassengers = 1;
+              });
             },
-            theme: theme,
+            currentPassengers: _currentPassengers,
+            onPassengerCountChanged: (count) {
+              setState(() {
+                _currentPassengers = count;
+              });
+            },
           ),
         ],
       ),

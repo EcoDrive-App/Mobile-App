@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/components/profile_option.dart';
 import 'package:mobile_app/theme/theme_provider.dart';
 import 'package:mobile_app/user/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -95,12 +96,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   Center(
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundColor: theme.primary.withValues(alpha: 0.2),
-                          child: Icon(Icons.person, size: 40, color: theme.primary),
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.primary,
+                                theme.primary.withValues(alpha: 0.7),
+                              ],
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: theme.surface,
+                            child: Icon(Icons.person, size: 40, color: theme.primary),
+                          ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 16),
                         Text(
                           user?.name ?? 'Usuario',
                           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: theme.onSurface),
@@ -108,74 +121,68 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 4),
                         Text(
                           user?.email ?? 'usuario@gmail.com',
-                          style: TextStyle(fontSize: 16, color: theme.onSurface),
+                          style: TextStyle(fontSize: 16, color: theme.onSurface.withValues(alpha: 0.7)),
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "Puntos: 320",
-                          style: TextStyle(fontSize: 16, color: theme.primary, fontWeight: FontWeight.w600),
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: theme.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.star, color: theme.primary, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                "320 puntos",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: theme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  _buildOption(
+                  const SizedBox(height: 40),
+                  ProfileOption(
                     icon: Icons.edit,
                     text: "Editar perfil",
                     onTap: () {},
-                    theme: theme,
                   ),
-                  _buildOption(
+                  ProfileOption(
                     icon: Icons.help_outline,
                     text: "Ayuda",
                     onTap: () {},
-                    theme: theme,
                   ),
-                  _buildOption(
+                  ProfileOption(
                     icon: Icons.privacy_tip_outlined,
                     text: "Políticas",
                     onTap: () {},
-                    theme: theme,
                   ),
-                  _buildOption(
+                  ProfileOption(
                     icon: Icons.brightness_6,
                     text: "Cambiar tema",
                     onTap: () => _showThemeSelector(context),
-                    theme: theme,
                   ),
-                  const SizedBox(height: 40,),
-                  _buildOption(
+                  const SizedBox(height: 40),
+                  ProfileOption(
                     icon: Icons.logout,
                     text: "Cerrar sesión",
                     onTap: _logout,
-                    theme: theme,
                     color: Colors.red,
                   ),
-
                 ],
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-
-  Widget _buildOption({
-    required IconData icon,
-    required String text,
-    required VoidCallback onTap,
-    required ColorScheme theme,
-    Color? color,
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: color ?? theme.primary),
-      title: Text(
-        text,
-        style: TextStyle(color: color ?? theme.onSurface),
-      ),
-      onTap: onTap,
     );
   }
 }
