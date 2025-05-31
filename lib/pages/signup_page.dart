@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/api/auth.dart';
+import 'package:mobile_app/components/custom_snack_bar.dart';
 import 'package:mobile_app/preferences/user_provider.dart';
+import 'package:mobile_app/types/user.dart';
 import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {
@@ -14,16 +17,45 @@ class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
   bool _acceptTerms = false;
+  bool _hasError = false;
+  bool _obscurePassword = true;
 
   void _signup() async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    await userProvider.loginUser(
-      _nameController.text,
-      _emailController.text
+    if (!_acceptTerms) {
+      CustomSnackBar.show(context: context, text: 'Debes aceptar los términos y condiciones', icon: Icons.warning_outlined);
+      return;
+    }
+
+    setState(() {
+      _hasError = false;
+    });
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator.adaptive(),
+      )
     );
 
+    final response = await AuthApi.register(_nameController.text, _emailController.text, _passController.text);
+
     if (mounted) {
-      Navigator.pushReplacementNamed(context, '/routes');
+      Navigator.pop(context);
+
+      if (response != null) {
+        final user = User.fromMap(response);
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        await userProvider.loginUser(user);
+
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/routes');
+        }
+      } else {
+        setState(() {
+          _hasError = true;
+        });
+      }
     }
   }
 
@@ -83,6 +115,12 @@ class _SignupPageState extends State<SignupPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: _hasError ? Colors.red : theme.outline,
+                        ),
+                      ),
                     ),
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
@@ -96,6 +134,12 @@ class _SignupPageState extends State<SignupPage> {
                       labelText: 'Correo electrónico',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: _hasError ? Colors.red : theme.outline,
+                        ),
                       ),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -111,9 +155,38 @@ class _SignupPageState extends State<SignupPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: _hasError ? Colors.red : theme.outline,
+                        ),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          color: theme.onSurfaceVariant,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                     ),
-                    keyboardType: TextInputType.emailAddress,
+                    obscureText: _obscurePassword,
                   ),
+
+                  if (_hasError)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Error al crear la cuenta',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
 
                   const SizedBox(height: 10),
 

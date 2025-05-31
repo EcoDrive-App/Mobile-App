@@ -11,15 +11,13 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context).colorScheme;
     final userProvider = Provider.of<UserProvider>(context);
 
     if (userProvider.isLoading) {
       return Scaffold(
-        body: Center(child:
-          Theme.of(context).platform == TargetPlatform.iOS
-            ? CupertinoActivityIndicator(radius: 16, animating: true, color: theme.primary,)
-            : CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(theme.primary),),),
+        body: Center(
+          child:  CircularProgressIndicator.adaptive()
+        )
       );
     }
 

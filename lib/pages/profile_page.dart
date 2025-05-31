@@ -136,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               Icon(Icons.star, color: theme.primary, size: 20),
                               const SizedBox(width: 8),
                               Text(
-                                "320 puntos",
+                                '${user?.points} puntos',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: theme.primary,

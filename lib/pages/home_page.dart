@@ -223,16 +223,7 @@ class _HomePageState extends State<HomePage> {
                             color: theme.onSurface.withValues(alpha: 0.05),
                           ),
                           child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Theme.of(context).platform == TargetPlatform.iOS
-                                  ? CupertinoActivityIndicator(radius: 16, animating: true, color: theme.primary)
-                                  : CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(theme.primary),
-                                    )
-                              ],
-                            ),
+                            child: CircularProgressIndicator.adaptive(),
                           ),
                         ),
                     ),
