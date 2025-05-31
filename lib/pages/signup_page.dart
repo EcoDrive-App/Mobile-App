@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/user/user_provider.dart';
+import 'package:mobile_app/preferences/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {

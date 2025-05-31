@@ -10,8 +10,9 @@ import 'package:mobile_app/components/google_map_widget.dart';
 import 'package:mobile_app/components/permission_warning.dart';
 import 'package:mobile_app/components/recent_route.dart';
 import 'package:mobile_app/components/recommendation_card.dart';
+import 'package:mobile_app/preferences/location_provider.dart';
 import 'package:mobile_app/types/recommendation.dart';
-import 'package:mobile_app/user/user_provider.dart';
+import 'package:mobile_app/preferences/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -87,6 +88,11 @@ class _HomePageState extends State<HomePage> {
         position.longitude
       );
 
+      if (mounted) {
+        final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+        await locationProvider.savePosition(position);
+      }
+
       setState(() {
         _currentPosition = position;
         if (placemarks.isNotEmpty) {
@@ -97,41 +103,29 @@ class _HomePageState extends State<HomePage> {
       });
 
     } catch (e) {
-      setState(() {
-        _setDefaultPosition();
-      });
+      if (mounted){
+        setState(() {
+          _setDefaultPosition();
+        });
+      }
     }
   }
 
   Future<void> _setDefaultPosition() async {
-    // try {
-    //   bool hasPermission = await _handleLocationPermission();
-    //   if (hasPermission) {
-    //     Position? lastKnownPosition = await Geolocator.getLastKnownPosition();
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+    Position? lastKnownPosition = await locationProvider.loadLastKnownPosition();
 
-    //     if (lastKnownPosition != null) {
-    //       setState(() {
-    //         _currentPosition = lastKnownPosition;
-    //         _currentAddress = "";
-    //         _isLoadingLocation = false;
-    //       });
-    //       return;
-    //     }
-    //   }
-    // } catch (e) {
-    //   // If there's any error, continue to default position
-    // }
-
-    // If no last known position or no permission, use default position
-    final position = Position(
-      latitude: 6.2442, longitude: -75.5812,
-      timestamp: DateTime.now(),
-      accuracy: 0, altitude: 0, heading: 0, speed: 0, altitudeAccuracy: 0, headingAccuracy: 0,
-      speedAccuracy: 0, floor: 0, isMocked: false
-    );
+    if (lastKnownPosition != null) {
+      setState(() {
+        _currentPosition = lastKnownPosition;
+        _currentAddress = "";
+        _isLoadingLocation = false;
+      });
+      return;
+    }
 
     setState(() {
-      _currentPosition = position;
+      _currentPosition = locationProvider.getDefaultPosition();
       _currentAddress = "";
       _isLoadingLocation = false;
     });
@@ -153,11 +147,9 @@ class _HomePageState extends State<HomePage> {
   void _setupLocationServiceListener() {
     _locationServiceSubscription = Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
       if (status == ServiceStatus.enabled) {
-        // When location is enabled, try to get the current position
         setState(() => _currentPosition = null);
         _getCurrentLocation();
       } else {
-        // When location is disabled, set to default position
         _setDefaultPosition();
       }
     });

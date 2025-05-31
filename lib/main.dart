@@ -6,9 +6,10 @@ import 'package:mobile_app/pages/login_page.dart';
 import 'package:mobile_app/pages/navigation_page.dart';
 import 'package:mobile_app/pages/routes_page.dart';
 import 'package:mobile_app/pages/signup_page.dart';
+import 'package:mobile_app/preferences/location_provider.dart';
 import 'package:mobile_app/theme/theme.dart';
 import 'package:mobile_app/theme/theme_provider.dart';
-import 'package:mobile_app/user/user_provider.dart';
+import 'package:mobile_app/preferences/user_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -21,6 +22,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => themeProvider,),
         ChangeNotifierProvider(create: (_) => UserProvider()..loadUserData(), lazy: false,),
+        ChangeNotifierProvider(create: (_) => LocationProvider(),),
       ],
       child: const MainApp(),
     )

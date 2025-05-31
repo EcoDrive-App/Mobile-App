@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/components/profile_option.dart';
 import 'package:mobile_app/theme/theme_provider.dart';
-import 'package:mobile_app/user/user_provider.dart';
+import 'package:mobile_app/preferences/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {

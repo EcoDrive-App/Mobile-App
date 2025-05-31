@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/pages/login_page.dart';
 import 'package:mobile_app/pages/routes_page.dart';
-import 'package:mobile_app/user/user_provider.dart';
+import 'package:mobile_app/preferences/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class AuthWrapper extends StatelessWidget {
