@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/types/user.dart';
+import 'package:mobile_app/utils/token_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider with ChangeNotifier {
@@ -15,6 +16,7 @@ class UserProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
 
       _user = User.fromMap({
+        'id': prefs.getString('user_id'),
         'name': prefs.getString('user_name'),
         'email': prefs.getString('user_email'),
         'points': prefs.getDouble('user_points'),
@@ -31,6 +33,7 @@ class UserProvider with ChangeNotifier {
   Future<void> loginUser(User user) async {
     final prefs = await SharedPreferences.getInstance();
 
+    await prefs.setString('user_id', user.id);
     await prefs.setString('user_name', user.name);
     await prefs.setString('user_email', user.email);
     await prefs.setDouble('user_points', user.points);
@@ -43,7 +46,9 @@ class UserProvider with ChangeNotifier {
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
+    await TokenStorage.removeToken();
 
+    await prefs.remove('user_id');
     await prefs.remove('user_name');
     await prefs.remove('user_email');
     await prefs.remove('user_points');
@@ -53,16 +58,17 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateUser(String newName) async {
+  Future<void> updateUser(String newName, String newEmail) async {
     if (_user == null) return;
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_name', newName);
 
     _user = User(
+      id: _user!.id,
       name: newName,
-      email: _user!.email,
-      points: 0,
+      email: newEmail,
+      points: _user!.points,
       isLoggedIn: true,
     );
 

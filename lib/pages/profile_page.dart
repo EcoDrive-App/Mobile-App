@@ -153,7 +153,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   ProfileOption(
                     icon: Icons.edit,
                     text: "Editar perfil",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(context, '/edit-profile');
+                    },
                   ),
                   ProfileOption(
                     icon: Icons.help_outline,

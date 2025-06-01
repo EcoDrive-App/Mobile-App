@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobile_app/pages/auth_wrapper.dart';
 import 'package:mobile_app/pages/destination_page.dart';
+import 'package:mobile_app/pages/edit_profile_page.dart';
 import 'package:mobile_app/pages/login_page.dart';
 import 'package:mobile_app/pages/navigation_page.dart';
 import 'package:mobile_app/pages/routes_page.dart';
@@ -45,6 +46,7 @@ class MainApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),
+        '/edit-profile': (context) => EditProfilePage(),
         '/routes': (context) => RoutesPage(),
         '/destination': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;

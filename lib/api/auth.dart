@@ -44,8 +44,4 @@ class AuthApi {
     }
     return null;
   }
-
-  static Future<void> logout() async {
-    await TokenStorage.removeToken();
-  }
 }
