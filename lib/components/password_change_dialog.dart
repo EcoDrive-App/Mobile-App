@@ -38,6 +38,14 @@ class _PasswordChangeDialogState extends State<PasswordChangeDialog> {
     if (_formKey.currentState!.validate()) {
       final user = Provider.of<UserProvider>(context, listen: false).user;
 
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator.adaptive(),
+        )
+      );
+
       await UserApi.updateUser(
         user!.id,
         null,
