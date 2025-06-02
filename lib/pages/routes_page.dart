@@ -68,39 +68,36 @@ class _RoutesPageState extends State<RoutesPage> with AutomaticKeepAliveClientMi
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            // Main Content
-            Positioned.fill(
-              child: IndexedStack(
-                index: _currentIndex,
-                children: _pages,
-              ),
+      body: Stack(
+        children: [
+          // Main Content
+          Positioned.fill(
+            child: IndexedStack(
+              index: _currentIndex,
+              children: _pages,
             ),
+          ),
 
-            // Floating navbar
+          // Floating navbar
+          Positioned(
+            bottom: 20,
+            left: 0,
+            right: 0,
+            child: CustomNavbar(
+              currentIndex: _currentIndex,
+              onTap: _onTabSelected,
+            ),
+          ),
+
+          // Location warning (now on top of navbar)
+          if (!_isLocationEnabled)
             Positioned(
-              bottom: 20,
               left: 0,
               right: 0,
-              child: CustomNavbar(
-                currentIndex: _currentIndex,
-                onTap: _onTabSelected,
-              ),
+              bottom: 20,
+              child: const LocationWarning(),
             ),
-
-            // Location warning (now on top of navbar)
-            if (!_isLocationEnabled)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 20,
-                child: const LocationWarning(),
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }

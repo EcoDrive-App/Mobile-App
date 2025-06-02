@@ -14,22 +14,19 @@ class _PointsPageState extends State<PointsPage> {
 
     return Scaffold(
       backgroundColor: theme.surface,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text("Canjea tus puntos", style: TextStyle(fontSize: 28)),
-                ],
-              ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 62),
+                Text("Canjea tus puntos", style: TextStyle(fontSize: 28)),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

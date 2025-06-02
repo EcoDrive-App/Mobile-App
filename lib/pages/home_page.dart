@@ -163,146 +163,124 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       backgroundColor: theme.surface,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 60),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 16),
-                      Text("EcoDrive",
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: theme.primary,),
-                      ),
-                      const SizedBox(height: 8),
-                      Text.rich(
-                        TextSpan(text: "Buen día, ",
-                          style: TextStyle(fontSize: 18, color: theme.onSurface.withValues(alpha: 0.8),),
-                          children: [
-                            TextSpan(
-                              text: user?.name ?? 'Usuario',
-                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primary,),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  if (!_hasLocationPermission)
-                    PermissionWarning(onPermissionGranted: () async {
-                      _getCurrentLocation();
-                    }),
-
-
-                  if (_hasLocationPermission) ...[
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      child: _currentPosition != null
-                        ? KeyedSubtree(
-                          key: const ValueKey('map'),
-                          child: ClipRRect(
-                            child: SizedBox(
-                              height: 280,
-                              child: MyGoogleMapWidget(initialPosition: _currentPosition!),
-                            ),
-                          ),
-                        )
-                        : Container(
-                          key: const ValueKey('loading'),
-                          height: 280,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(width: 1.5, color: theme.onSurface.withValues(alpha: 0.4)),
-                            color: theme.onSurface.withValues(alpha: 0.05),
-                          ),
-                          child: Center(
-                            child: CircularProgressIndicator.adaptive(),
-                          ),
-                        ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 60),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 62),
+                    Text("EcoDrive",
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: theme.primary,),
                     ),
-
-                    GestureDetector(
-                      onTap: () {
-                        if (_isLoadingLocation) {
-                          CustomSnackBar.show(context: context, text: 'Buscando tu ubicación', icon: Icons.location_on);
-                          return;
-                        }
-
-                        Navigator.pushNamed(context, '/destination', arguments: {
-                          'currentAddress': _currentAddress,
-                          'initialPos': LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: theme.surface,
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
-                          border: Border.all(color: theme.outline),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.onSurface.withValues(alpha: 0.05),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: theme.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(Icons.search, color: theme.primary),
-                            ),
-                            const SizedBox(width: 12),
-                            const Expanded(
-                              child: Text(
-                                "¿Hacia dónde?",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          ],
-                        ),
+                    const SizedBox(height: 8),
+                    Text.rich(
+                      TextSpan(text: "Buen día, ",
+                        style: TextStyle(fontSize: 18, color: theme.onSurface.withValues(alpha: 0.8),),
+                        children: [
+                          TextSpan(
+                            text: user?.name ?? 'Usuario',
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: theme.primary,),
+                          ),
+                        ],
                       ),
                     ),
-
-                    const SizedBox(height: 32),
-                    Row(
-                      children: [
-                        Icon(Icons.history, color: theme.primary, size: 24),
-                        const SizedBox(width: 8),
-                        Text(
-                          "Rutas Recientes",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: theme.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    RecentRoute(to: "ITM Robledo"),
-                    RecentRoute(to: "Castilla"),
                   ],
+                ),
+                const SizedBox(height: 24),
+
+                if (!_hasLocationPermission)
+                  PermissionWarning(onPermissionGranted: () async {
+                    _getCurrentLocation();
+                  }),
+
+
+                if (_hasLocationPermission) ...[
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: _currentPosition != null
+                      ? KeyedSubtree(
+                        key: const ValueKey('map'),
+                        child: ClipRRect(
+                          child: SizedBox(
+                            height: 280,
+                            child: MyGoogleMapWidget(initialPosition: _currentPosition!),
+                          ),
+                        ),
+                      )
+                      : Container(
+                        key: const ValueKey('loading'),
+                        height: 280,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(width: 1.5, color: theme.onSurface.withValues(alpha: 0.4)),
+                          color: theme.onSurface.withValues(alpha: 0.05),
+                        ),
+                        child: Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
+                  ),
+
+                  GestureDetector(
+                    onTap: () {
+                      if (_isLoadingLocation) {
+                        CustomSnackBar.show(context: context, text: 'Buscando tu ubicación', icon: Icons.location_on);
+                        return;
+                      }
+
+                      Navigator.pushNamed(context, '/destination', arguments: {
+                        'currentAddress': _currentAddress,
+                        'initialPos': LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: theme.surface,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10), bottomLeft: Radius.circular(16), bottomRight: Radius.circular(16)),
+                        border: Border.all(color: theme.outline),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.onSurface.withValues(alpha: 0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: theme.primary.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(Icons.search, color: theme.primary),
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Text(
+                              "¿Hacia dónde?",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 32),
                   Row(
                     children: [
-                      Icon(Icons.lightbulb_outline, color: theme.primary, size: 24),
+                      Icon(Icons.history, color: theme.primary, size: 24),
                       const SizedBox(width: 8),
                       Text(
-                        "Consejo del día",
+                        "Rutas Recientes",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w600,
@@ -312,17 +290,36 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  RecommendationCard(
-                    recommendation: _recommendation,
-                    onTap: () {
-                    },
-                  ),
-                  const SizedBox(height: 32),
+                  RecentRoute(to: "ITM Robledo"),
+                  RecentRoute(to: "Castilla"),
                 ],
-              ),
+
+                const SizedBox(height: 32),
+                Row(
+                  children: [
+                    Icon(Icons.lightbulb_outline, color: theme.primary, size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Consejo del día",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: theme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                RecommendationCard(
+                  recommendation: _recommendation,
+                  onTap: () {
+                  },
+                ),
+                const SizedBox(height: 32),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

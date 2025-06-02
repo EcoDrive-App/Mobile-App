@@ -7,7 +7,9 @@ import 'package:mobile_app/pages/login_page.dart';
 import 'package:mobile_app/pages/navigation_page.dart';
 import 'package:mobile_app/pages/routes_page.dart';
 import 'package:mobile_app/pages/signup_page.dart';
+import 'package:mobile_app/preferences/first_time_check.dart';
 import 'package:mobile_app/preferences/location_provider.dart';
+import 'package:mobile_app/screens/onboarding_screen.dart';
 import 'package:mobile_app/theme/theme.dart';
 import 'package:mobile_app/theme/theme_provider.dart';
 import 'package:mobile_app/preferences/user_provider.dart';
@@ -42,8 +44,19 @@ class MainApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeProvider.themeMode,
-      home: const AuthWrapper(),
+      home: FutureBuilder<bool>(
+        future: FirstTimeCheck.hasSeenOnboarding(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator.adaptive());
+          }
+
+          final hasSeenOnboarding = snapshot.data ?? false;
+          return hasSeenOnboarding ? const AuthWrapper() : const OnboardingScreen();
+        },
+      ),
       routes: {
+        '/auth': (context) => AuthWrapper(),
         '/login': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),
         '/edit-profile': (context) => EditProfilePage(),

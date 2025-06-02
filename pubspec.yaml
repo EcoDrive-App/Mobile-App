@@ -35,3 +35,4 @@ flutter:
     - .env
     - assets/
     - assets/login/
+    - assets/onboardingscreen/
