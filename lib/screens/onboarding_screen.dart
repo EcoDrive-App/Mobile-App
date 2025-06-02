@@ -12,6 +12,7 @@ class OnboardingScreen extends StatelessWidget {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           Container(
