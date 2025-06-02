@@ -20,11 +20,17 @@ class CustomSnackBar {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: theme.onPrimary, size: 20),
             const SizedBox(width: 12),
-            Text( text, style: TextStyle(color: theme.onPrimary, fontSize: 14),),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(color: theme.onPrimary, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+            ),
           ],
         ),
         behavior: SnackBarBehavior.floating,

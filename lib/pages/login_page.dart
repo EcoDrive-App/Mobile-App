@@ -16,8 +16,33 @@ class _LoginPageState extends State<LoginPage> {
   final _passController = TextEditingController();
   bool _hasError = false;
   bool _obscurePassword = true;
+  final _formKey = GlobalKey<FormState>();
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa tu correo electrónico';
+    }
+    if (!value.contains('@') || !value.contains('.')) {
+      return 'Por favor ingresa un correo electrónico válido';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa tu contraseña';
+    }
+    if (value.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres';
+    }
+    return null;
+  }
 
   void _login() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     setState(() {
       _hasError = false;
     });
@@ -89,64 +114,68 @@ class _LoginPageState extends State<LoginPage> {
 
             Padding(
               padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 20),
-              child: Column(
-                children: [
-                  Text(
-                    "Inicio de Sesión",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Correo electrónico',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: _hasError ? Colors.red : theme.outline,
-                        ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Text(
+                      "Inicio de Sesión",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold
                       ),
                     ),
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                  ),
+                    const SizedBox(height: 20),
 
-                  const SizedBox(height: 20),
-
-                  TextFormField(
-                    controller: _passController,
-                    decoration: InputDecoration(
-                      labelText: 'Contraseña',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: _hasError ? Colors.red : theme.outline,
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        labelText: 'Correo electrónico',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: _hasError ? Colors.red : theme.outline,
+                          ),
                         ),
                       ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          color: theme.onSurfaceVariant,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      validator: _validateEmail,
                     ),
-                    obscureText: _obscurePassword,
-                  ),
+
+                    const SizedBox(height: 20),
+
+                    TextFormField(
+                      controller: _passController,
+                      decoration: InputDecoration(
+                        labelText: 'Contraseña',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: _hasError ? Colors.red : theme.outline,
+                          ),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            color: theme.onSurfaceVariant,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: _obscurePassword,
+                      validator: _validatePassword,
+                    ),
 
                   if (_hasError)
                     Align(
@@ -160,65 +189,66 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
 
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        '¿Olvidaste tu contraseña?',
-                        style: TextStyle(
-                          color: theme.secondary,
-                          fontWeight: FontWeight.w600
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  GestureDetector(
-                    onTap: _login,
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      decoration: BoxDecoration(
-                        color: theme.primary,
-                        borderRadius: BorderRadius.circular(24)
-                      ),
-                      child: Center(
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {},
                         child: Text(
-                          'Iniciar Sesión',
+                          '¿Olvidaste tu contraseña?',
                           style: TextStyle(
-                            color: theme.onPrimary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            color: theme.secondary,
+                            fontWeight: FontWeight.w600
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 15),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('¿No tienes cuenta? '),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/signup');
-                        },
-                        child: Text(
-                          'Crea una',
-                          style: TextStyle(
-                            color: theme.primary,
-                            fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: _login,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        decoration: BoxDecoration(
+                          color: theme.primary,
+                          borderRadius: BorderRadius.circular(24)
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Iniciar Sesión',
+                            style: TextStyle(
+                              color: theme.onPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('¿No tienes cuenta? '),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/signup');
+                          },
+                          child: Text(
+                            'Crea una',
+                            style: TextStyle(
+                              color: theme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

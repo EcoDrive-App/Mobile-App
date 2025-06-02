@@ -19,8 +19,43 @@ class _SignupPageState extends State<SignupPage> {
   bool _acceptTerms = false;
   bool _hasError = false;
   bool _obscurePassword = true;
+  final _formKey = GlobalKey<FormState>();
+
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa tu nombre';
+    }
+    if (value.length < 2) {
+      return 'El nombre debe tener al menos 2 caracteres';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa tu correo electrónico';
+    }
+    if (!value.contains('@') || !value.contains('.')) {
+      return 'Por favor ingresa un correo electrónico válido';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Por favor ingresa una contraseña';
+    }
+    if (value.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres';
+    }
+    return null;
+  }
 
   void _signup() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     if (!_acceptTerms) {
       CustomSnackBar.show(context: context, text: 'Debes aceptar los términos y condiciones', icon: Icons.warning_outlined);
       return;
@@ -55,6 +90,12 @@ class _SignupPageState extends State<SignupPage> {
         setState(() {
           _hasError = true;
         });
+        CustomSnackBar.show(
+          context: context,
+          text: 'Error al crear la cuenta. Por favor intenta nuevamente.',
+          icon: Icons.error_outline,
+          backgroundColor: Colors.red,
+        );
       }
     }
   }
@@ -97,16 +138,18 @@ class _SignupPageState extends State<SignupPage> {
 
             Padding(
               padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 20),
-              child: Column(
-                children: [
-                  Text(
-                    "Registro",
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Text(
+                      "Registro",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                   TextFormField(
                     controller: _nameController,
@@ -124,9 +167,10 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
+                    validator: _validateName,
                   ),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                   TextFormField(
                     controller: _emailController,
@@ -144,9 +188,10 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
+                    validator: _validateEmail,
                   ),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                   TextFormField(
                     controller: _passController,
@@ -174,115 +219,105 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                     ),
                     obscureText: _obscurePassword,
+                    validator: _validatePassword,
                   ),
-
-                  if (_hasError)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Error al crear la cuenta',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
 
                   const SizedBox(height: 10),
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        side: BorderSide(width: 1.5, color: theme.onSurface),
-                        value: _acceptTerms,
-                        onChanged: (value) {
-                          setState(() {
-                            _acceptTerms = value ?? false;
-                          });
-                        },
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Wrap(
-                            children: [
-                              const Text('Acepto los '),
-                              GestureDetector(
-                                onTap: () {
-                                },
-                                child: Text(
-                                  'términos y condiciones',
-                                  style: TextStyle(
-                                    color: theme.primary,
-                                    fontWeight: FontWeight.bold,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Checkbox(
+                          side: BorderSide(width: 1.5, color: theme.onSurface),
+                          value: _acceptTerms,
+                          onChanged: (value) {
+                            setState(() {
+                              _acceptTerms = value ?? false;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Wrap(
+                              children: [
+                                const Text('Acepto los '),
+                                GestureDetector(
+                                  onTap: () {
+                                  },
+                                  child: Text(
+                                    'términos y condiciones',
+                                    style: TextStyle(
+                                      color: theme.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Text(' y '),
-                              GestureDetector(
-                                onTap: () {
-                                },
-                                child: Text(
-                                  'políticas de privacidad',
-                                  style: TextStyle(
-                                    color: theme.primary,
-                                    fontWeight: FontWeight.bold,
+                                const Text(' y '),
+                                GestureDetector(
+                                  onTap: () {
+                                  },
+                                  child: Text(
+                                    'políticas de privacidad',
+                                    style: TextStyle(
+                                      color: theme.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  GestureDetector(
-                    onTap: _signup,
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      decoration: BoxDecoration(
-                        color: theme.primary,
-                        borderRadius: BorderRadius.circular(24)
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Crear Cuenta',
-                          style: TextStyle(
-                            color: theme.onPrimary,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: _signup,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        decoration: BoxDecoration(
+                          color: theme.primary,
+                          borderRadius: BorderRadius.circular(24)
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Crear Cuenta',
+                            style: TextStyle(
+                              color: theme.onPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Ya tienes cuenta? '),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/login');
-                        },
-                        child: Text(
-                          'Empiza Ahora',
-                          style: TextStyle(
-                            color: theme.primary,
-                            fontWeight: FontWeight.bold,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Ya tienes cuenta? '),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/login');
+                          },
+                          child: Text(
+                            'Empiza Ahora',
+                            style: TextStyle(
+                              color: theme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
